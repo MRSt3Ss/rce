@@ -1,0 +1,37 @@
+##
+# Clean Joomla .htaccess
+# Safe for Googlebot, GSC, SEO, Shared Hosting
+##
+
+# Disable directory listing
+Options -Indexes
+
+# Prevent content sniffing
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Protect SVG
+<FilesMatch "\.svg$">
+  <IfModule mod_headers.c>
+    Header always set Content-Security-Policy "script-src 'none'"
+  </IfModule>
+</FilesMatch>
+
+# Enable Rewrite
+RewriteEngine On
+
+# Authorization header fix
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# If not file or folder → Joomla router
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
+
+# PHP Handler (cPanel) - OPTIONAL
+# Comment if server already handles PHP
+# <IfModule mime_module>
+#   AddHandler application/x-httpd-ea-php81 .php .php5 .phtml
+# </IfModule>
